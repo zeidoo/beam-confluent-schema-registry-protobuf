@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.zeidoo.protobuf;
+
+import "InnerMessage.proto";
+
+message OuterMessage {
+  string OuterProp = 1;
+  com.zeidoo.protobuf.InnerMessage inner = 2;
+}
+
