@@ -15,7 +15,7 @@ import org.apache.beam.sdk.values.KV;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.joda.time.DateTime;
 
-public class DecoderProviderConsumer {
+public class DynamicMessageDecoderProviderConsumer {
 
     private static String topic = "dummytopic";
 
@@ -24,12 +24,12 @@ public class DecoderProviderConsumer {
         options.as(FlinkPipelineOptions.class).setRunner(FlinkRunner.class);
 
         Pipeline p = Pipeline.create(options);
-        p.apply(KafkaIO.<String, OuterMessageOuterClass.OuterMessage>read()
+        p.apply(KafkaIO.<String, DynamicMessage>read()
                 .withStartReadTime(DateTime.now().minusDays(5).toInstant())
                 .withBootstrapServers("localhost:9092")
                 .withTopic(topic)
                 .withKeyDeserializer(StringDeserializer.class)
-                .withValueDeserializer(SchemaRegistryProtobufDeserializer.of("http://localhost:8081", topic, OuterMessageOuterClass.OuterMessage.class))
+                .withValueDeserializer(SchemaRegistryProtobufDeserializer.of("http://localhost:8081", topic, DynamicMessage.class))
                 .withoutMetadata()
         )
                 .apply(MapElements.via(new ConsumeFn()));
@@ -37,9 +37,9 @@ public class DecoderProviderConsumer {
         p.run().waitUntilFinish();
     }
 
-    public static class ConsumeFn extends SimpleFunction<KV<String, OuterMessageOuterClass.OuterMessage>, String> {
+    public static class ConsumeFn extends SimpleFunction<KV<String, DynamicMessage>, String> {
         @Override
-        public String apply(KV<String, OuterMessageOuterClass.OuterMessage> input) {
+        public String apply(KV<String, DynamicMessage> input) {
             String s = input.getValue().toString();
             System.out.println(s);
             return s;

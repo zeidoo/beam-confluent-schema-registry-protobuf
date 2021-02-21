@@ -15,16 +15,15 @@ Demo project to show how to use Apache Beam with the Confluent Schema Registry a
 1. Use the CachedSchemaRegistryClient to create a coder and configure the pipeline to use it.
 1. Create a KafkaProtobufDeserializer and deserialize the byte array to a DynamicMessage.
 
-# DeserializerProvider Consumer
+# DynamicMessageDecoderProvider/DeserializerProvider Consumer
 
 1. Same ideas as the Simple Consumer but all in one place.
 1. Without the inner deserializer class `InnerDeserializer`, the code doesn't work.
-1. KafkaIO can now use DynamicMessage instead of byte array.
+1. KafkaIO can now use DynamicMessage or concrete protobuf class instead of byte array.
 
 # Notes
 
-* You can configure the KafkaProtobufDeserializer to return concrete implementations (ie: the protoc generated classes) by reading [this](https://docs.confluent.io/platform/current/schema-registry/serdes-develop/serdes-protobuf.html).
-* The `SchemaRegistryProtobufDeserializer` is a copy paste of the `ConfluentSchemaRegistryDeserializerProvider` class from the Beam project. It only works for Avro.
+* The `SchemaRegistryProtobufDeserializer` is mostly a copy/paste of the `ConfluentSchemaRegistryDeserializerProvider` class from the Beam project which only works for Avro.
 * `DeserializerProvider<T>` is not public so `SchemaRegistryProtobufDeserializer` needs to be in `package org.apache.beam.sdk.io.kafka;`
 
 # Docker
